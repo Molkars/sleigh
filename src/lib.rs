@@ -3,18 +3,23 @@ use std::{collections::HashMap, pin::Pin};
 use cxx::{let_cxx_string, UniquePtr};
 use sleigh_sys::{RustAssemblyEmit, RustLoadImage, RustPCodeEmit};
 
+#[cfg(feature = "serde")]
+use serde_derive;
+
 pub mod sla;
 
 pub type Opcode = sleigh_sys::Opcode;
 pub type SpaceType = sleigh_sys::SpaceType;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct AddrSpace {
     pub name: String,
     pub type_: SpaceType,
 }
 
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct VarnodeData {
     pub space: AddrSpace,
     pub offset: u64,
@@ -43,6 +48,7 @@ impl From<&sleigh_sys::ffi::VarnodeData> for VarnodeData {
 }
 
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct PCode {
     pub address: u64,
     pub opcode: Opcode,
@@ -51,6 +57,7 @@ pub struct PCode {
 }
 
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct Instruction {
     pub address: u64,
     pub mnemonic: String,
@@ -134,23 +141,27 @@ impl sleigh_sys::LoadImage for VectorLoader {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub enum X86Mode {
     Mode16,
     Mode32,
     Mode64,
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub enum X64Mode {
     Mode16,
     Mode32,
     Mode64,
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub enum ArmMode {
     Arm,
     Thumb,
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub enum ArmVersion {
     Arm4,
     Arm4t,
@@ -161,16 +172,19 @@ pub enum ArmVersion {
     Arm8,
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub enum Endian {
     LittleEndian,
     BigEndian,
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct Image {
     pub base_addr: u64,
     pub data: Vec<u8>,
 }
 
+#[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct ArchState {
     spec: String,
     var: HashMap<String, u32>,
