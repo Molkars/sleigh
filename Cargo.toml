@@ -24,3 +24,6 @@ serde = [
     "dep:serde_derive",
     "sleigh-sys/serde",
 ]
+
+[workspace]
+members = []

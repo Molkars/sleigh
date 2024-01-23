@@ -36,6 +36,11 @@ impl From<&sleigh_sys::ffi::VarnodeData> for VarnodeData {
             let t = sleigh_sys::ffi::getAddrSpaceType(space);
             let type_ = sleigh_sys::SpaceType::from_u32(t).unwrap();
             let name = space.getName().to_string();
+            println!(
+                "word size: word={} addr={}",
+                space.getWordSize(),
+                space.getAddrSize()
+            );
             AddrSpace { name, type_ }
         };
         let size = sleigh_sys::ffi::getVarnodeSize(var);
