@@ -147,6 +147,7 @@ impl sleigh_sys::LoadImage for VectorLoader {
 }
 
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
+#[derive(Debug, Clone, Copy)]
 pub enum X86Mode {
     Mode16,
     Mode32,
@@ -154,6 +155,7 @@ pub enum X86Mode {
 }
 
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
+#[derive(Debug, Clone, Copy)]
 pub enum X64Mode {
     Mode16,
     Mode32,
@@ -161,12 +163,14 @@ pub enum X64Mode {
 }
 
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
+#[derive(Debug, Clone, Copy)]
 pub enum ArmMode {
     Arm,
     Thumb,
 }
 
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
+#[derive(Debug, Clone, Copy)]
 pub enum ArmVersion {
     Arm4,
     Arm4t,
@@ -178,6 +182,7 @@ pub enum ArmVersion {
 }
 
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
+#[derive(Debug, Clone, Copy)]
 pub enum Endian {
     LittleEndian,
     BigEndian,
