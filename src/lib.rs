@@ -337,7 +337,7 @@ impl Decompiler {
         DecompilerBuilder { state: () }
     }
 
-    pub fn translate(&mut self, code: &[u8], addr: u64) -> (usize, Vec<PCode>) {
+    pub fn translate(&mut self, code: &[u8], addr: u64, limit: u64) -> (usize, Vec<PCode>) {
         self.loader.data.clear();
         self.loader.data.extend_from_slice(code);
         self.loader.start = addr;
@@ -347,19 +347,19 @@ impl Decompiler {
             let n = self
                 .inner
                 .pin_mut()
-                .translate(&mut rust_emit as *mut _, addr);
+                .translate(&mut rust_emit as *mut _, addr, limit);
             (n as usize, emit.pcodes)
         }
     }
 
-    pub fn disassemble(&mut self, code: &[u8], addr: u64) -> (usize, Vec<Instruction>) {
+    pub fn disassemble(&mut self, code: &[u8], addr: u64, limit: u64) -> (usize, Vec<Instruction>) {
         self.loader.data.clear();
         self.loader.data.extend_from_slice(code);
         self.loader.start = addr;
         let mut emit = AssemblyEmit { insts: vec![] };
         unsafe {
             let mut rust_emit = RustAssemblyEmit::from_internal(&mut emit);
-            let n = self.inner.pin_mut().disassemble(&mut rust_emit as _, addr);
+            let n = self.inner.pin_mut().disassemble(&mut rust_emit as _, addr, limit);
             (n as usize, emit.insts)
         }
     }
@@ -375,17 +375,17 @@ mod tests {
             .arm(ArmVersion::Arm8, Endian::LittleEndian, ArmMode::Arm)
             .build();
         for _ in 0..100 {
-            let (n, pcodes) = decompiler.translate(b"\x01\x00\x80\x00", 0x1000);
+            let (n, pcodes) = decompiler.translate(b"\x01\x00\x80\x00", 0x1000, 0);
             println!("{} {:?}", n, pcodes);
-            let (n, insts) = decompiler.disassemble(b"\x01\x00\x80\x00", 0x1000);
+            let (n, insts) = decompiler.disassemble(b"\x01\x00\x80\x00", 0x1000, 0);
             println!("{} {:?}", n, insts);
         }
     }
 
     fn run(decompiler: &mut Decompiler, code: &[u8], addr: u64) {
-        let (n, pcodes) = decompiler.translate(code, addr);
+        let (n, pcodes) = decompiler.translate(code, addr, 0);
         println!("{} {:?}", n, pcodes);
-        let (n, insts) = decompiler.disassemble(code, addr);
+        let (n, insts) = decompiler.disassemble(code, addr, 0);
         println!("{} {:?}", n, insts);
     }
 
