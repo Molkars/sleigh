@@ -191,12 +191,12 @@ pub struct Image {
 
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct ArchState {
-    spec: String,
-    var: HashMap<String, u32>,
+    pub spec: String,
+    pub var: HashMap<String, u32>,
 }
 
 pub struct DecompilerBuilder<T> {
-    state: T,
+    pub state: T,
 }
 
 impl DecompilerBuilder<()> {
@@ -297,10 +297,8 @@ impl DecompilerBuilder<ArchState> {
         let mut loader = Box::new(loader);
 
         unsafe {
-            let rust_loader = Box::new(RustLoadImage::from_internal(std::mem::transmute::<
-                _,
-                &'static mut VectorLoader,
-            >(loader.as_mut())));
+            let rust_loader = std::mem::transmute::<_, &'static mut VectorLoader>(loader.as_mut());
+            let rust_loader = Box::new(RustLoadImage::from_internal(rust_loader));
             let rust_loader: *mut RustLoadImage<'static> = Box::leak(rust_loader);
             let mut inner = sleigh_sys::ffi::newDecompiler(rust_loader, doc);
 
