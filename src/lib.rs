@@ -1,6 +1,7 @@
-use std::{collections::HashMap, pin::Pin};
+use std::{pin::Pin};
+use hashbrown::HashMap;
 
-use cxx::{let_cxx_string, UniquePtr};
+use cxx::{CxxVector, let_cxx_string, UniquePtr};
 use sleigh_sys::{RustAssemblyEmit, RustLoadImage, RustPCodeEmit};
 
 #[cfg(feature = "serde")]
@@ -11,14 +12,14 @@ pub mod sla;
 pub type Opcode = sleigh_sys::Opcode;
 pub type SpaceType = sleigh_sys::SpaceType;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct AddrSpace {
     pub name: String,
     pub type_: SpaceType,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct VarnodeData {
     pub space: AddrSpace,
@@ -362,6 +363,19 @@ impl Decompiler {
             let n = self.inner.pin_mut().disassemble(&mut rust_emit as _, addr, limit);
             (n as usize, emit.insts)
         }
+    }
+
+    pub fn get_all_registers(&self) -> HashMap<VarnodeData, String> {
+        let mut vec = CxxVector::new();
+        unsafe {
+            self.inner.getRegisterList(vec.pin_mut());
+        }
+        let mut out = HashMap::new();
+        for entry in vec.iter() {
+            let node = VarnodeData::from(entry.getVarnode());
+            out.insert(node, entry.getKey().to_string());
+        }
+        out
     }
 }
 
