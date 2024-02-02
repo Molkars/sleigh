@@ -11,14 +11,14 @@ pub mod sla;
 pub type Opcode = sleigh_sys::Opcode;
 pub type SpaceType = sleigh_sys::SpaceType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct AddrSpace {
     pub name: String,
     pub type_: SpaceType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct VarnodeData {
     pub space: AddrSpace,
@@ -47,7 +47,7 @@ impl From<&sleigh_sys::ffi::VarnodeData> for VarnodeData {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
 pub struct PCode {
     pub address: u64,
