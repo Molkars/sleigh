@@ -18,8 +18,6 @@ pub struct AddrSpace {
     pub name: String,
     pub type_: SpaceType,
     pub is_big_endian: bool,
-    pub word_size: u32,
-    pub addr_size: u32,
 }
 
 #[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
@@ -41,9 +39,7 @@ impl From<&sleigh_sys::ffi::VarnodeData> for VarnodeData {
             let type_ = sleigh_sys::SpaceType::from_u32(t).unwrap();
             let name = space.getName().to_string();
             let is_big_endian = space.isBigEndian();
-            let word_size = space.getWordSize();
-            let addr_size = space.getAddrSize();
-            AddrSpace { name, type_, is_big_endian, word_size, addr_size }
+            AddrSpace { name, type_, is_big_endian }
         };
         let size = sleigh_sys::ffi::getVarnodeSize(var);
         Self {
