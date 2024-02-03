@@ -24,6 +24,7 @@ serde = [
     "dep:serde",
     "dep:serde_derive",
     "sleigh-sys/serde",
+    "hashbrown/serde"
 ]
 
 [workspace]
